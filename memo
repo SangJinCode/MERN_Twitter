@@ -1,0 +1,15 @@
+PS C:\Coding\JS\20240830_MERN_Twitter> npm install express mongoose jsonwebtoken bcryptjs dotenv cors cookie-parser cloudinary cookie-parser
+
+ add in package.json
+
+"type": "module",
+
+  "scripts": {
+    "dev": "nodemon backend/server.js"
+  },
+
+  C:\Users\admin>docker run -d -p 27018:27017 --name MERN_Twitter -v F:\docker_volumes\mongodb_MERN_Twitter -e MONGODB_INITDB_ROOT_USERNAME=root -e MONGODB_INITDB_ROOT_PASSWORD=8733dg5525! mongo
+90f6a458829184cacd7a4b2f319f6a8d3d2b4fa7caffc0b6a374d302b8c8bd1d
+
+C:\Users\admin>docker exec -it MERN_Twitter bash
+
