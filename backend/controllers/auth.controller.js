@@ -4,7 +4,6 @@ import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js"
 
 export const signup = async (req, res) => {
     try {
-        console.log(req.body)
         const { fullName, username, email, password} = req.body;
         console.log(fullName, username, email, password)
 
@@ -37,10 +36,13 @@ export const signup = async (req, res) => {
             password: hashedPassword
         })
         console.log("$$newUser$$",newUser)
+
         if (newUser) {
             //token 생성 함수 호출
             generateTokenAndSetCookie(newUser._id, res)
+
             await newUser.save();
+
             res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,
@@ -52,29 +54,28 @@ export const signup = async (req, res) => {
                 coverImg: newUser.coverImg,         
             })
         } else {
-            console.log("Error in signup controller", error.message);
             return res.status(400).json({ error: "Invaild user data" });
         }
 
     } catch (error) {
-        return res.status(500).json({ error: "Internal Server Error" });
-    } finally {
-
+        console.log("Error in signup controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-}
+};
 
 export const login = async (req,res) => {
      try {
         const {username, password} = req.body;
-        console.log(username,"*****", {username})
         const user = await User.findOne({username});
         const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
         if(!user || !isPasswordCorrect) {
-            return res.status(400).json({error: "Invalid username or password"});
+            return res.status(400).json({ error: "Invalid username or password" });
         }
 
+        //JWT token 생성 및 res.cookie에 주입
         generateTokenAndSetCookie(user._id, res)
+        
         res.status(200).json({
             _id: user._id,
             fullName: user.fullName,
@@ -85,11 +86,12 @@ export const login = async (req,res) => {
             profileImg: user.profileImg,
             coverImg: user.coverImg,         
         })
+
     } catch (error) {
         console.log("Error in login controller", error.message);
-        return res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Internal Server Error" });
     } 
-}
+};
 
 export const logout = async (req,res) => {
     try {
@@ -104,10 +106,11 @@ export const logout = async (req,res) => {
 export const getMe = async (req, res) => {
     try {
         //"-password"를 사용하면 pasword는 제외하고 전달
+        //req.user._id는 middleware인 protectRoute() 로부터 검증 후 전달 받은 것이다.
         const user = await User.findById(req.user._id).select("-password");
         res.status(200).json(user);
     } catch (error) {
         console.log("Error in getMe controller", error.message);
-        return res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Internal Server Error" });
     }
-}
+};

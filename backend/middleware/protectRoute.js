@@ -24,7 +24,7 @@ export const protectRoute = async ( req, res, next) => {
         
         req.user = user;
         
-        //next() 메서드를 사용하면 protectRoute()가 완료되면 다음 함수인 getMe()로 요청을 전달한다.
+        //next() 메서드를 사용하면 순서대로 protectRoute()를 실행하고 완료되면 다음 함수인 getMe()를 실행한다.
         next();
 
     } catch (error) {
